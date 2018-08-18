@@ -1,0 +1,84 @@
+<div class="container">
+	<div class="row">
+	
+		<!-- Chat rooms -->
+		<div class="col-md-2">			
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					Chat Rooms
+				</div>
+				<ul class="list-group">
+					<li class="list-group-item">
+						<form action="/create-new-chatroom" method="post">
+							<div class="form-group">
+								<input type="text" id="new-chat-title" class="form-control" name="newChatTitle" placeholder="Title">
+							</div>
+							<input type="hidden" name="_csrf" value="{{ csrfToken }}">
+							<button type="submit" id="new-chat-btn" class="btn btn-xs btn-info" disabled>
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+						</form>
+					</li>
+				</ul>
+				<div class="list-group">
+					{{# each chatrooms}}
+						<div class="chatrooms list-group-item clearfix">
+							{{this.title}}
+							<p hidden>{{this.id}}</p> 
+							<div class="dropdown pull-right">
+							    <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span class="caret"></span>
+								</button>
+							    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="/delete-chatroom/{{this.id}}">Remove</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="#">Separated link</a></li>
+								</ul>
+							</div>
+						</div>
+					{{/ each}}
+				</div>
+			</div>
+		</div>
+		
+		<!-- Chat box -->
+		<div class="col-md-8">
+			<div id="chat-panel" class="panel panel-primary">
+				<div id="chat-title" class="panel-heading">-----------------------</div>
+				<div class="row">
+					<div class="col-sm-9">
+						<div id="chatbox" class="panel-body"></div>
+					</div>
+					<div class="col-sm-3">
+						<ul id="chat-userlist" class="list-group"></ul>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<input type="text" id="chat-msg" name="msg" placeholder="Enter your message.">
+					<button id="chat-send" class="btn btn-xs btn-primary">Send</button>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Friend list -->
+		<div class="col-md-2">
+			<h3>Friend List</h3>
+			<a href="/users/search">Search User</a>
+			<ul class="list-group">
+				{{# each friends}}
+					<li class="list-group-item">{{this.username}}
+						<button class="invite-btn btn btn-xs pull-right" value="{{this.username}}">
+							<span class="glyphicon glyphicon-plus"></span>
+						</button>
+					</li>
+				{{/ each}}
+			</ul>
+		</div>
+	</div>
+</div>
+
+<script src='/javascripts/webchat.js'></script>
+<script>
+	
+	
+</script>	

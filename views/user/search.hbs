@@ -1,0 +1,37 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<h1>Search User</h1>
+
+			<form action="/users/search" method="get">
+				<div class="form-group">
+					<label for="search-user">Search User: </label>
+					<input type="text" id="search-user" class="form-control" name="search-user">
+				</div>
+				<button type="submit" class="btn btn-info">Search</button>
+			</form>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			{{# if display}}
+				<div class="panel panel-default">
+					<div class="panel-heading">Results: </div>
+					<ul class="list-group">
+						{{# if warning }}
+							<li class="list-group-item clearfix">
+								<div class="alert alert-warning">{{ results }}</div> 
+							</li>
+						{{ else }}
+							<li class="list-group-item clearfix">
+								{{ results }}
+								<a href="/users/add-user/{{results}}" class="btn btn-xs btn-info pull-right">Add</a>
+							</li>
+						{{/ if }}
+					</ul>
+				</div>
+			{{/ if }}
+		</div>
+	</div>
+</div>

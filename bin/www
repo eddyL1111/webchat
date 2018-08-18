@@ -1,0 +1,192 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('proa:server');
+var http = require('http');
+
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port, '0.0.0.0');
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+
+// Socket.io for webchat
+
+var io = require('socket.io')(server);
+
+const Chatroom = require('../models/chatroom');
+
+io.on('connection', function(socket) {		
+	socket.on('chat-startup', function(data) {
+		Chatroom.findOne({_id: data.roomId})
+			.then(doc => {
+				if(doc) {					
+					socket.emit('chat-output', {
+						roomId: data.roomId,
+						messages: doc.messages
+					});
+					socket.emit('chat-userlist', doc.users);
+				}
+			})
+		.catch(err => {
+			console.log(err);
+		});
+	});
+	
+	socket.on('chat-input', (data) => {
+		Chatroom.findOne({_id: data.roomId})
+			.then(doc => {				
+				doc.messages.push({username: data.username, message: data.message});
+				doc.save((err, doc) => {
+					if(err) console.log(err);
+					
+					let results = []
+					results.push(data);
+					
+					io.emit('chat-output', {
+						roomId: data.roomId,
+						messages: results
+					});
+				});
+			})
+		.catch(err => {
+			console.log(err);
+		});	
+	});
+
+	socket.on('room-change', data => {
+		Chatroom.findOne({_id: data.roomId})
+			.then(doc => {
+				if(doc) {					
+					socket.emit('chat-output', {
+						messages: doc.messages,
+						roomId: data.roomId
+					});
+				}
+			})
+		.catch(err => {
+			console.log(err);
+		});
+	});
+	
+	socket.on('invite-to-chat', data => {
+		console.log(data.user);
+		Chatroom.findOne({_id: data.roomId, users: data.user})
+			.then(doc => {
+				if(!doc) {
+					return Chatroom.findOne({_id: data.roomId});
+				}
+			})
+			.then(doc => {
+				if(doc) {
+					doc.users.push(data.user);
+					doc.save((err, doc) => {
+						if(err) console.log(err);
+						
+						
+						socket.emit('chat-userlist', doc.users);
+					});
+				}
+			})
+		.catch(err => {
+			console.log(err);
+		});
+	});
+
+
+
+
+
+	socket.on('disconnect', function() {
+		//console.log('User exited the app');
+	});
+	
+	socket.on('login', function(data) {
+		console.log(data.username + ' has logged on.');
+	});
+	
+	socket.on('logout', function(data) {
+		console.log(data.username + ' has logged out');
+	});
+}); // end of io on connection

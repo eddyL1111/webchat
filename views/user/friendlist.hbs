@@ -1,0 +1,30 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<h1>Friends</h1>
+			<ul class="list-group">
+				{{# each friends }}
+					<li class="list-group-item">{{this.username}}</li>
+				{{/ each }}
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h1>Accepting Requests</h1>
+			<ul class="list-group">				
+				{{# each accepting}}
+					<li class="list-group-item clearfix">
+						{{ this.username }} 
+						<a href="/users/add-to-friendlist/{{this.username}}" class="confirm-pending btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-ok"></span></a>
+						<a href="/users/remove-from-accepting/{{this.username}}" class="confirm-pending btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-remove"></span></a> 
+					</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div class="col-md-4">
+		
+		</div>
+	</div>
+	
+	
+	
+</div>

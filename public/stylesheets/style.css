@@ -1,0 +1,36 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#chatbox {
+	height: 50vh;
+	overflow-y: auto;
+}
+
+#chat-msg {
+	width: 90%;
+}
+
+.chatrooms:hover {
+	background-color: #F8F8F8;
+}
+
+.confirm-pending {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+#invited {
+	height: 50vh;
+	overflow-y: auto;
+}
+
+/*
+#chat-window {
+	background-color: #00B7FF;
+}*/

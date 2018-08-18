@@ -1,0 +1,22 @@
+<div class="container">
+	<div class="col-md-6 col-md-offset-3">
+		<h1>Sign In</h1>
+		{{# if hasErrors }}
+			<div class="alert alert-danger">
+				{{# each messages }}
+					<p>{{ this }}</p>
+				{{/ each}}
+			</div>
+		{{/ if }}
+		<form id="signin-form" action="/users/signin" method="post">
+			<div class="form-group">
+				<input type="text" id="username" class="form-control" name="username" placeholder="Username">
+			</div>
+			<div class="form-group">
+				<input type="password" id="password" class="form-control" name="password" placeholder="Password">
+			</div>
+			<input type="hidden" name="_csrf" value="{{ csrfToken }}">
+			<button type="submit" class="btn btn-info pull-right">Login</button>
+		</form>
+	</div>
+</div>
